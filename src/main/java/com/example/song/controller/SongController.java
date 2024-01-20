@@ -1,3 +1,4 @@
+// Write your code here
 package com.example.song.controller;
 
 import java.util.ArrayList;
@@ -16,28 +17,28 @@ import com.example.song.service.SongH2Service;
 
 @RestController
 public class SongController {
-	
-	@Autowired
-	SongH2Service songService ;
-	
-	@GetMapping("/songs")
-    public ArrayList<Song> get_Song_List(){
+
+    @Autowired
+    SongH2Service songService;
+
+    @GetMapping("/songs")
+    public ArrayList<Song> get_Song_List() {
 
         return songService.getSongsList();
     }
 
     @PostMapping("/songs")
-    public Song addSongs(@RequestBody Song song){
+    public Song addSongs(@RequestBody Song song) {
 
         return songService.addSong(song);
     }
 
-     @GetMapping("/songs/{songId}")
-    public Song getSongById(@PathVariable("songId") int songId){
+    @GetMapping("/songs/{songId}")
+    public Song getSongById(@PathVariable("songId") int songId) {
 
         return songService.getSongById(songId);
-    } 
-    
+    }
+
     @PutMapping("/songs/{songId}")
     public Song updateSong(@PathVariable("songId") int songId, @RequestBody Song song) {
 
@@ -46,8 +47,8 @@ public class SongController {
 
     @DeleteMapping("/songs/{songId}")
     public ArrayList<Song> deleteSong(@PathVariable("songId") int songId) {
-    
-    	songService.deleteSong(songId);
+
+        songService.deleteSong(songId);
         return songService.getSongsList();
     }
 

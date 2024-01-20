@@ -1,3 +1,4 @@
+// Write your code here
 package com.example.song.service;
 
 import java.util.ArrayList;
@@ -14,10 +15,10 @@ import com.example.song.model.SongRowMapper;
 import com.example.song.repository.SongRepository;
 
 @Service
-public class SongH2Service implements SongRepository{
-	
+public class SongH2Service implements SongRepository {
+
 	@Autowired
-  	private JdbcTemplate db;
+	private JdbcTemplate db;
 
 	@Override
 	public ArrayList<Song> getSongsList() {
@@ -27,44 +28,49 @@ public class SongH2Service implements SongRepository{
 	}
 
 	@Override
+	public Song getSongById(int songId) {
+		try {
+			Song song = db.queryForObject("select * from playlist where songId = ?", new SongRowMapper(), songId);
+			return song;
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
+
+	}
+
+	@Override
 	public Song addSong(Song song) {
-		db.update("insert into playlist(songName,lyricist,singer,musicDirector) values(?,?,?,?)", song.getSongName(),song.getLyricist(),song.getSinger(),song.getMusicDirector());
-		Song savedSong = db.queryForObject("select * from playList where songName = ? and lyricist = ? and singer = ? and musicDirector = ? ", 
-						new SongRowMapper(),song.getSongName(),song.getLyricist(),song.getSinger(),song.getMusicDirector());
+		db.update("insert into playlist(songName,lyricist,singer,musicDirector) values(?,?,?,?)", song.getSongName(),
+				song.getLyricist(), song.getSinger(), song.getMusicDirector());
+		Song savedSong = db.queryForObject("select * from playlist where songName = ? and lyricist = ? ",
+				new SongRowMapper(), song.getSongName(), song.getLyricist());
 		return savedSong;
 	}
 
 	@Override
-	public Song getSongById(int songId) {
-		try{
-    		Song song = (Song)db.queryForObject("select * from playlist where songId = ?", new SongRowMapper(), songId);
-			return song;
-		}catch(Exception e){
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		}
-		
-	}
-
-	@Override
 	public Song updateSong(int songId, Song song) {
-		try{
-			if(song.getSongName() != null){
-				db.update("update playlist set singer = ? where playerId = ?", song.getSinger());
-			}
-			return getSongById(songId);
 
-		}catch (Exception e){
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		if (song.getSongName() != null) {
+			db.update("update playlist set songName = ? where songId = ?", song.getSongName(), songId);
 		}
-		
+		if (song.getLyricist() != null) {
+			db.update("update playlist set lyricist = ? where songId =?", song.getLyricist(), songId);
+
+		}
+		if (song.getSinger() != null) {
+			db.update("update playlist set  singer = ? where songId =?", song.getSinger(), songId);
+		}
+		if (song.getMusicDirector() != null) {
+			db.update("update playlist set singer = ? where songId =?", song.getSinger(), songId);
+		}
+		return getSongById(songId);
+
 	}
 
 	@Override
 	public void deleteSong(int songId) {
-		db.update("delete from team where playerId = ?", songId);
-		
+		db.update("delete from playlist where songId = ?", songId);
+
 	}
-	
-	
 
 }
